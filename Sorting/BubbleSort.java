@@ -86,6 +86,37 @@ public class BubbleSort {
     // --- Core Implementation ---
 
     /**
+     * Standard in-place bubble sort implementation.
+     * This method provides a simple interface for sorting an array in ascending order.
+     * 
+     * @param arr The array to be sorted.
+     */
+    public static void bubbleSort(int[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+
+        int n = arr.length;
+        boolean swapped;
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    // Swap arr[j] and arr[j+1]
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+            // Optimization: if no two elements were swapped by inner loop, then break
+            if (!swapped) {
+                break;
+            }
+        }
+    }
+
+    /**
      * Executes the optimized bubble sort algorithm on the provided integer array.
      * 
      * @param elements The array of integers to be sorted.
@@ -213,13 +244,21 @@ public class BubbleSort {
         sort(arr2, "DESC");
         System.out.println("Sorted:   " + Arrays.toString(arr2));
 
-        // 5. Best Case Performance (Already Sorted)
+        // 5. bubbleSort(int[] arr) wrapper test
+        int[] arr4 = {5, 1, 4, 2, 8};
+        System.out.println("\n[bubbleSort(int[] arr) Test]");
+        System.out.println("Original: " + Arrays.toString(arr4));
+        bubbleSort(arr4);
+        System.out.println("Sorted:   " + Arrays.toString(arr4));
+        System.out.println("Valid:    " + isSorted(arr4));
+
+        // 6. Best Case Performance (Already Sorted)
         int[] arr3 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         System.out.println("\n[Best Case Performance]");
         SortMetrics metrics3 = sort(arr3, "ASC");
         System.out.println("Metrics:  " + metrics3);
 
-        // 6. Benchmark
+        // 7. Benchmark
         int size = 1000;
         int iterations = 50;
         System.out.println("\n[Benchmark]");
