@@ -20,7 +20,7 @@ public class BubbleSort {
 
         public SortInput(int[] elements, String order) {
             this.elements = elements;
-            this.order = order;
+            this.order = (order != null) ? order : "ASC";
         }
     }
 
@@ -64,6 +64,19 @@ public class BubbleSort {
     }
 
     /**
+     * Response structure for ExecuteBubbleSort interface.
+     */
+    public static class ExecuteBubbleSortResponse {
+        public SortMetrics metrics;
+        public int[] sorted_elements;
+
+        public ExecuteBubbleSortResponse(SortMetrics metrics, int[] sorted_elements) {
+            this.metrics = metrics;
+            this.sorted_elements = sorted_elements;
+        }
+    }
+
+    /**
      * Complexity information about the Bubble Sort implementation.
      */
     public static class AlgorithmInfo {
@@ -88,32 +101,13 @@ public class BubbleSort {
     /**
      * Standard in-place bubble sort implementation.
      * This method provides a simple interface for sorting an array in ascending order.
+     * Now returns SortMetrics to integrate metrics counting.
      * 
      * @param arr The array to be sorted.
+     * @return SortMetrics containing performance data.
      */
-    public static void bubbleSort(int[] arr) {
-        if (arr == null || arr.length <= 1) {
-            return;
-        }
-
-        int n = arr.length;
-        boolean swapped;
-        for (int i = 0; i < n - 1; i++) {
-            swapped = false;
-            for (int j = 0; j < n - i - 1; j++) {
-                if (arr[j] > arr[j + 1]) {
-                    // Swap arr[j] and arr[j+1]
-                    int temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                    swapped = true;
-                }
-            }
-            // Optimization: if no two elements were swapped by inner loop, then break
-            if (!swapped) {
-                break;
-            }
-        }
+    public static SortMetrics bubbleSort(int[] arr) {
+        return sort(arr, "ASC");
     }
 
     /**
@@ -159,6 +153,21 @@ public class BubbleSort {
 
         long endTime = System.nanoTime();
         return new SortMetrics(comparisons, swaps, endTime - startTime);
+    }
+
+    /**
+     * Executes the optimized bubble sort algorithm on the provided integer array.
+     * Aligns with the ExecuteBubbleSort interface.
+     * 
+     * @param input SortInput containing elements and order.
+     * @return ExecuteBubbleSortResponse containing metrics and sorted elements.
+     */
+    public static ExecuteBubbleSortResponse executeBubbleSort(SortInput input) {
+        if (input == null || input.elements == null) {
+            return new ExecuteBubbleSortResponse(new SortMetrics(0, 0, 0), new int[0]);
+        }
+        SortMetrics metrics = sort(input.elements, input.order);
+        return new ExecuteBubbleSortResponse(metrics, input.elements);
     }
 
     // --- Utility Methods ---
@@ -209,6 +218,17 @@ public class BubbleSort {
     }
 
     /**
+     * Utility to verify if an array is correctly sorted.
+     * Aligns with the ValidateSort interface.
+     * 
+     * @param elements The array to validate.
+     * @return SortResult containing validation status.
+     */
+    public static SortResult validateSort(int[] elements) {
+        return new SortResult(elements, isSorted(elements));
+    }
+
+    /**
      * Checks if the sorting service is operational.
      */
     public static String healthCheck() {
@@ -225,16 +245,33 @@ public class BubbleSort {
         System.out.println("\n[Standard Sorting Test]");
         System.out.println("Original array: " + Arrays.toString(arr));
         
-        // 2. Call bubbleSort (demonstrating it's in-place)
+        // 2. Call bubbleSort (demonstrating it's in-place and returns metrics)
         int[] originalRef = arr;
-        bubbleSort(arr);
+        SortMetrics metrics = bubbleSort(arr);
         
         // 3. Print result
         System.out.println("Sorted array:   " + Arrays.toString(arr));
         System.out.println("In-place check: " + (arr == originalRef ? "PASSED (Same reference)" : "FAILED (Different reference)"));
+        System.out.println("Metrics:        " + metrics);
         System.out.println("Is sorted:      " + isSorted(arr));
 
-        // 4. Edge Cases (Demonstrating they do not crash)
+        // 4. Interface Alignment Tests
+        System.out.println("\n[Interface Alignment Tests]");
+        
+        // ExecuteBubbleSort
+        int[] arr2 = {5, 1, 4, 2, 8};
+        SortInput input = new SortInput(arr2, "DESC");
+        System.out.println("Executing sort (DESC) on: " + Arrays.toString(arr2));
+        ExecuteBubbleSortResponse response = executeBubbleSort(input);
+        System.out.println("Sorted result:  " + Arrays.toString(response.sorted_elements));
+        System.out.println("Metrics:        " + response.metrics);
+        
+        // ValidateSort
+        SortResult validation = validateSort(response.sorted_elements);
+        // Note: isSorted currently only checks ASC, so DESC will be false
+        System.out.println("Validation (ASC check): " + validation.is_sorted);
+
+        // 5. Edge Cases (Demonstrating they do not crash)
         System.out.println("\n[Edge Case Tests]");
         
         System.out.print("Testing null array: ");
@@ -255,18 +292,12 @@ public class BubbleSort {
         bubbleSort(singleArr);
         System.out.println("PASSED (No crash, result: " + Arrays.toString(singleArr) + ")");
 
-        // 5. Additional Features (from previous tasks/spec)
+        // 6. Additional Features
         System.out.println("\n[Additional Features]");
         System.out.println("Algorithm Info: " + getAlgorithmInfo());
         System.out.println("Health Check:   " + healthCheck());
         
-        int[] descArr = {1, 2, 3, 4, 5};
-        System.out.println("\nSorting descending: " + Arrays.toString(descArr));
-        SortMetrics metrics = sort(descArr, "DESC");
-        System.out.println("Result:             " + Arrays.toString(descArr));
-        System.out.println("Metrics:            " + metrics);
-
-        // 6. Benchmark
+        // 7. Benchmark
         int size = 100;
         int iterations = 10;
         System.out.println("\n[Benchmark]");
