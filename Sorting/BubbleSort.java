@@ -174,6 +174,7 @@ public class BubbleSort {
 
     /**
      * Retrieves complexity information about the Bubble Sort implementation.
+     * Aligns with the GetAlgorithmInfo interface.
      */
     public static AlgorithmInfo getAlgorithmInfo() {
         return new AlgorithmInfo();
@@ -198,23 +199,41 @@ public class BubbleSort {
             SortMetrics metrics = sort(arr, "ASC");
             totalTime += metrics.execution_time_ns;
         }
-
         return (double) totalTime / iterations;
+    }
+
+    /**
+     * Utility to verify if an array is correctly sorted.
+     * Optionally respects ASC/DESC order.
+     * 
+     * @param elements The array to check.
+     * @param order Desired sort order ("ASC" or "DESC").
+     * @return true if sorted, false otherwise.
+     */
+    public static boolean isSorted(int[] elements, String order) {
+        if (elements == null || elements.length <= 1) {
+            return true;
+        }
+        boolean ascending = order == null || !order.equalsIgnoreCase("DESC");
+        for (int i = 0; i < elements.length - 1; i++) {
+            if (ascending) {
+                if (elements[i] > elements[i + 1]) {
+                    return false;
+                }
+            } else {
+                if (elements[i] < elements[i + 1]) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
      * Utility to verify if an array is correctly sorted in ascending order.
      */
     public static boolean isSorted(int[] elements) {
-        if (elements == null || elements.length <= 1) {
-            return true;
-        }
-        for (int i = 0; i < elements.length - 1; i++) {
-            if (elements[i] > elements[i + 1]) {
-                return false;
-            }
-        }
-        return true;
+        return isSorted(elements, "ASC");
     }
 
     /**
@@ -225,7 +244,18 @@ public class BubbleSort {
      * @return SortResult containing validation status.
      */
     public static SortResult validateSort(int[] elements) {
-        return new SortResult(elements, isSorted(elements));
+        return validateSort(elements, "ASC");
+    }
+
+    /**
+     * Utility to verify if an array is correctly sorted with specified order.
+     * 
+     * @param elements The array to validate.
+     * @param order The order to check against.
+     * @return SortResult containing validation status.
+     */
+    public static SortResult validateSort(int[] elements, String order) {
+        return new SortResult(elements, isSorted(elements, order));
     }
 
     /**
@@ -267,9 +297,8 @@ public class BubbleSort {
         System.out.println("Metrics:        " + response.metrics);
         
         // ValidateSort
-        SortResult validation = validateSort(response.sorted_elements);
-        // Note: isSorted currently only checks ASC, so DESC will be false
-        System.out.println("Validation (ASC check): " + validation.is_sorted);
+        SortResult validation = validateSort(response.sorted_elements, "DESC");
+        System.out.println("Validation (DESC check): " + validation.is_sorted);
 
         // 5. Edge Cases (Demonstrating they do not crash)
         System.out.println("\n[Edge Case Tests]");
