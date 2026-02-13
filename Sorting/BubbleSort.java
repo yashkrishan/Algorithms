@@ -96,6 +96,28 @@ public class BubbleSort {
         }
     }
 
+    /**
+     * Result of a benchmark execution.
+     * Aligns with the RunBenchmark interface response.
+     */
+    public static class BenchmarkResult {
+        public int array_size;
+        public double average_time_ns;
+
+        public BenchmarkResult(int array_size, double average_time_ns) {
+            this.array_size = array_size;
+            this.average_time_ns = average_time_ns;
+        }
+
+        @Override
+        public String toString() {
+            return "BenchmarkResult{" +
+                    "array_size=" + array_size +
+                    ", average_time_ns=" + String.format("%.2f", average_time_ns) + " ns" +
+                    '}';
+        }
+    }
+
     // --- Core Implementation ---
 
     /**
@@ -182,12 +204,16 @@ public class BubbleSort {
 
     /**
      * Runs a performance benchmark with a generated random array of specified size.
+     * Aligns with the RunBenchmark interface.
      * 
      * @param arraySize Size of the random array.
      * @param iterations Number of benchmark iterations.
-     * @return Average execution time in nanoseconds.
+     * @return BenchmarkResult containing average execution time.
      */
-    public static double runBenchmark(int arraySize, int iterations) {
+    public static BenchmarkResult runBenchmark(int arraySize, int iterations) {
+        if (iterations <= 0) {
+            return new BenchmarkResult(arraySize, 0);
+        }
         long totalTime = 0;
         Random random = new Random();
 
@@ -199,7 +225,7 @@ public class BubbleSort {
             SortMetrics metrics = sort(arr, "ASC");
             totalTime += metrics.execution_time_ns;
         }
-        return (double) totalTime / iterations;
+        return new BenchmarkResult(arraySize, (double) totalTime / iterations);
     }
 
     /**
@@ -268,6 +294,28 @@ public class BubbleSort {
     // --- Main Method for Testing ---
 
     public static void main(String[] args) {
+        // Argument parsing for benchmark mode
+        if (args.length > 0 && args[0].equalsIgnoreCase("--benchmark")) {
+            int size = 1000;
+            int iterations = 10;
+            if (args.length >= 2) {
+                try {
+                    size = Integer.parseInt(args[1]);
+                } catch (NumberFormatException ignored) {}
+            }
+            if (args.length >= 3) {
+                try {
+                    iterations = Integer.parseInt(args[2]);
+                } catch (NumberFormatException ignored) {}
+            }
+            System.out.println("=== Bubble Sort Benchmark Mode ===");
+            System.out.println("Array Size: " + size);
+            System.out.println("Iterations: " + iterations);
+            BenchmarkResult result = runBenchmark(size, iterations);
+            System.out.println("Result:     " + result);
+            return;
+        }
+
         System.out.println("=== Bubble Sort Standalone Implementation ===");
         
         // 1. Example Unsorted Array
@@ -326,12 +374,13 @@ public class BubbleSort {
         System.out.println("Algorithm Info: " + getAlgorithmInfo());
         System.out.println("Health Check:   " + healthCheck());
         
-        // 7. Benchmark
+        // 7. Default Benchmark
         int size = 100;
         int iterations = 10;
-        System.out.println("\n[Benchmark]");
+        System.out.println("\n[Default Benchmark]");
         System.out.println("Running benchmark (Size: " + size + ", Iterations: " + iterations + ")...");
-        double avgTime = runBenchmark(size, iterations);
-        System.out.println("Average execution time: " + String.format("%.2f", avgTime) + " ns");
+        BenchmarkResult result = runBenchmark(size, iterations);
+        System.out.println("Result: " + result);
+        System.out.println("\nTip: Run with '--benchmark [size] [iterations]' for custom benchmarks.");
     }
 }
