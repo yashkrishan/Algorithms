@@ -220,47 +220,55 @@ public class BubbleSort {
     public static void main(String[] args) {
         System.out.println("=== Bubble Sort Standalone Implementation ===");
         
-        // 1. Algorithm Info
-        System.out.println("\n[Algorithm Info]");
-        System.out.println(getAlgorithmInfo());
+        // 1. Example Unsorted Array
+        int[] arr = {64, 34, 25, 12, 22, 11, 90};
+        System.out.println("\n[Standard Sorting Test]");
+        System.out.println("Original array: " + Arrays.toString(arr));
+        
+        // 2. Call bubbleSort (demonstrating it's in-place)
+        int[] originalRef = arr;
+        bubbleSort(arr);
+        
+        // 3. Print result
+        System.out.println("Sorted array:   " + Arrays.toString(arr));
+        System.out.println("In-place check: " + (arr == originalRef ? "PASSED (Same reference)" : "FAILED (Different reference)"));
+        System.out.println("Is sorted:      " + isSorted(arr));
 
-        // 2. Health Check
-        System.out.println("\n[Health Check]");
-        System.out.println(healthCheck());
+        // 4. Edge Cases (Demonstrating they do not crash)
+        System.out.println("\n[Edge Case Tests]");
+        
+        System.out.print("Testing null array: ");
+        try {
+            bubbleSort(null);
+            System.out.println("PASSED (No crash)");
+        } catch (Exception e) {
+            System.out.println("FAILED (Crashed: " + e.getMessage() + ")");
+        }
 
-        // 3. Sorting Example (Ascending)
-        int[] arr1 = {64, 34, 25, 12, 22, 11, 90};
-        System.out.println("\n[Sorting Example - Ascending]");
-        System.out.println("Original: " + Arrays.toString(arr1));
-        SortMetrics metrics1 = sort(arr1, "ASC");
-        System.out.println("Sorted:   " + Arrays.toString(arr1));
-        System.out.println("Metrics:  " + metrics1);
-        System.out.println("Valid:    " + isSorted(arr1));
+        int[] emptyArr = {};
+        System.out.print("Testing empty array: ");
+        bubbleSort(emptyArr);
+        System.out.println("PASSED (No crash, result: " + Arrays.toString(emptyArr) + ")");
 
-        // 4. Sorting Example (Descending)
-        int[] arr2 = {64, 34, 25, 12, 22, 11, 90};
-        System.out.println("\n[Sorting Example - Descending]");
-        System.out.println("Original: " + Arrays.toString(arr2));
-        sort(arr2, "DESC");
-        System.out.println("Sorted:   " + Arrays.toString(arr2));
+        int[] singleArr = {42};
+        System.out.print("Testing single element array: ");
+        bubbleSort(singleArr);
+        System.out.println("PASSED (No crash, result: " + Arrays.toString(singleArr) + ")");
 
-        // 5. bubbleSort(int[] arr) wrapper test
-        int[] arr4 = {5, 1, 4, 2, 8};
-        System.out.println("\n[bubbleSort(int[] arr) Test]");
-        System.out.println("Original: " + Arrays.toString(arr4));
-        bubbleSort(arr4);
-        System.out.println("Sorted:   " + Arrays.toString(arr4));
-        System.out.println("Valid:    " + isSorted(arr4));
+        // 5. Additional Features (from previous tasks/spec)
+        System.out.println("\n[Additional Features]");
+        System.out.println("Algorithm Info: " + getAlgorithmInfo());
+        System.out.println("Health Check:   " + healthCheck());
+        
+        int[] descArr = {1, 2, 3, 4, 5};
+        System.out.println("\nSorting descending: " + Arrays.toString(descArr));
+        SortMetrics metrics = sort(descArr, "DESC");
+        System.out.println("Result:             " + Arrays.toString(descArr));
+        System.out.println("Metrics:            " + metrics);
 
-        // 6. Best Case Performance (Already Sorted)
-        int[] arr3 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        System.out.println("\n[Best Case Performance]");
-        SortMetrics metrics3 = sort(arr3, "ASC");
-        System.out.println("Metrics:  " + metrics3);
-
-        // 7. Benchmark
-        int size = 1000;
-        int iterations = 50;
+        // 6. Benchmark
+        int size = 100;
+        int iterations = 10;
         System.out.println("\n[Benchmark]");
         System.out.println("Running benchmark (Size: " + size + ", Iterations: " + iterations + ")...");
         double avgTime = runBenchmark(size, iterations);
