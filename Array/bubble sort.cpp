@@ -15,17 +15,17 @@ vector<int> Solution::bubbleSort(vector<int> &A) {
     
     int n = A.size();
     vector<int> res = A;
-    for (int i = 0; i < n - 1; i++) {
+    for(int i = 0; i < n - 1; i++) {
         bool swapped = false;
-        for (int j = 0; j < n - i - 1; j++) {
-            if (res[j] > res[j + 1]) {
+        for(int j = 0; j < n - i - 1; j++) {
+            if(res[j] > res[j + 1]) {
                 int temp = res[j];
                 res[j] = res[j + 1];
                 res[j + 1] = temp;
                 swapped = true;
             }
         }
-        if (!swapped) {
+        if(!swapped) {
             break;
         }
     }
