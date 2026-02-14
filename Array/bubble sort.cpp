@@ -13,4 +13,21 @@ vector<int> Solution::bubbleSort(vector<int> &A) {
     // Do not print the output, instead return values as specified
     // Still have a doubt. Checkout www.interviewbit.com/pages/sample_codes/ for more details
     
+    int n = A.size();
+    vector<int> res = A;
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (res[j] > res[j + 1]) {
+                int temp = res[j];
+                res[j] = res[j + 1];
+                res[j + 1] = temp;
+                swapped = true;
+            }
+        }
+        if (!swapped) {
+            break;
+        }
+    }
+    return res;
 }
