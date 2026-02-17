@@ -32,38 +32,45 @@ public:
      * @param A The input vector to sort
      * @return A new vector containing the sorted elements
      */
-    vector<int> bubbleSort(vector<int> A) {
-        // Create a copy to avoid modifying the original
-        vector<int> result = A;
-        
-        int n = result.size();
-        
-        // Edge case: empty or single element array is already sorted
-        if (n <= 1) {
-            return result;
-        }
-        
-        // Bubble sort: repeat until no swaps are needed
-        for (int i = 0; i < n - 1; i++) {
-            bool swapped = false;
-            
-            // Last i elements are already in place, so we don't need to check them
-            for (int j = 0; j < n - i - 1; j++) {
-                if (result[j] > result[j + 1]) {
-                    // Swap adjacent elements if they are in wrong order
-                    int temp = result[j];
-                    result[j] = result[j + 1];
-                    result[j + 1] = temp;
-                    swapped = true;
-                }
-            }
-            
-            // If no swapping occurred in this pass, array is already sorted
-            if (!swapped) {
-                break;
-            }
-        }
-        
+    vector<int> bubbleSort(vector<int> A);
+};
+
+vector<int> Solution::bubbleSort(vector<int> A) {
+    // Do not write main() function.
+    // Do not read input, instead use the arguments to the function.
+    // Do not print the output, instead return values as specified
+    // Still have a doubt. Checkout www.interviewbit.com/pages/sample_codes/ for more details
+    
+    // Create a copy to avoid modifying the original
+    vector<int> result = A;
+    
+    int n = result.size();
+    
+    // Edge case: empty or single element array is already sorted
+    if (n <= 1) {
         return result;
     }
-};
+    
+    // Bubble sort: repeat until no swaps are needed
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        
+        // Last i elements are already in place, so we don't need to check them
+        for (int j = 0; j < n - i - 1; j++) {
+            if (result[j] > result[j + 1]) {
+                // Swap adjacent elements if they are in wrong order
+                int temp = result[j];
+                result[j] = result[j + 1];
+                result[j + 1] = temp;
+                swapped = true;
+            }
+        }
+        
+        // If no swapping occurred in this pass, array is already sorted
+        if (!swapped) {
+            break;
+        }
+    }
+    
+    return result;
+}
