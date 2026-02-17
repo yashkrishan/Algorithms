@@ -17,7 +17,6 @@ Constraints:
 Time Complexity: O(n^2)
 Space Complexity: O(n) for the returned copy
 */
-
 #include <vector>
 #include <algorithm>
 
@@ -34,6 +33,13 @@ public:
      */
     vector<int> bubbleSort(vector<int> A);
 };
+
+// Helper function to swap two elements
+void swap(int& a, int& b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
 
 vector<int> Solution::bubbleSort(vector<int> A) {
     // Do not write main() function.
@@ -59,9 +65,7 @@ vector<int> Solution::bubbleSort(vector<int> A) {
         for (int j = 0; j < n - i - 1; j++) {
             if (result[j] > result[j + 1]) {
                 // Swap adjacent elements if they are in wrong order
-                int temp = result[j];
-                result[j] = result[j + 1];
-                result[j + 1] = temp;
+                swap(result[j], result[j + 1]);
                 swapped = true;
             }
         }
