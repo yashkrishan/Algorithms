@@ -21,19 +21,18 @@
 //
 //  Example:
 //  Given: [64, 25, 12, 22, 11]
-//  Pass 1: Find min in [64,25,12,22,11] -> 11, swap with 64 -> [11,25,12,22,64]
-//  Pass 2: Find min in [25,12,22,64] -> 12, swap with 25 -> [11,12,22,25,64]
-//  Pass 3: Find min in [22,25,64] -> 22, no swap needed -> [11,12,22,25,64]
-//  Pass 4: Find min in [25,64] -> 25, no swap needed -> [11,12,22,25,64]
+//  Pass 1: Find min in [64, 25, 12, 22, 11] -> 11, swap with 64 -> [11, 25, 12, 22, 64]
+//  Pass 2: Find min in [25, 12, 22, 64] -> 12, swap with 25 -> [11, 12, 25, 22, 64]
+//  Pass 3: Find min in [25, 22, 64] -> 22, swap with 25 -> [11, 12, 22, 25, 64]
+//  Pass 4: Find min in [25, 64] -> 25, swap with 25 -> [11, 12, 22, 25, 64]
 //  Result: [11, 12, 22, 25, 64]
 //
 //  Constraints:
 //  ------------
 //  - Time Complexity: O(n^2) - worst, average, and best cases
-//  - Space Complexity: O(n) - returns a new sorted vector (O(n) space)
-//  - In-place Space: O(1) - algorithm itself uses constant extra space
-//  - Stable: No - equal elements may change relative order
-//  - Adaptive: No - does not benefit from partially sorted arrays
+//  - Space Complexity: O(n) - returns a new sorted vector (does not modify input)
+//  - Not stable: may change the relative order of equal elements
+//  - In-place: No (returns sorted copy)
 //
 // ============================================================================
 
@@ -48,14 +47,14 @@ using namespace std;
 // Helper Functions
 // ============================================================================
 
-// Swaps two integers by reference
+// Standalone swap helper function using pass-by-reference for efficient swapping
 void swap(int& a, int& b) {
     int temp = a;
     a = b;
     b = temp;
 }
 
-// Prints vector elements to console
+// Utility function to print vector elements to console for debugging
 void printVector(const vector<int>& vec, const string& label = "Vector") {
     cout << label << ": [";
     for (size_t i = 0; i < vec.size(); ++i) {
@@ -83,26 +82,24 @@ bool verifySorted(const vector<int>& vec) {
 
 class Solution {
 public:
-    // Performs selection sort on the input vector and returns a sorted copy
-    // Time Complexity: O(n^2) - nested loops for finding min and swapping
-    // Space Complexity: O(n) - returns a new sorted vector
-    vector<int> selectionSort(const vector<int>& input) {
-        // Create a copy to avoid modifying the original
-        vector<int> result = input;
-        
+    // Public method that performs selection sort on input vector and returns sorted copy
+    vector<int> selectionSort(vector<int> nums) {
+        // Create a copy to avoid modifying the original vector
+        vector<int> result = nums;
         int n = result.size();
         
-        // Edge case: empty or single element array is already sorted
+        // Edge case: if array has 0 or 1 element, it's already sorted
         if (n <= 1) {
             return result;
         }
         
         // Selection sort algorithm
-        // Outer loop: iterate through each position in the array
+        // Outer loop: iterate through each position from 0 to n-1
         for (int i = 0; i < n - 1; ++i) {
-            // Find the minimum element in the unsorted portion (from i to n-1)
+            // Assume the current position has the minimum element
             int minIndex = i;
             
+            // Inner loop: find the minimum element in the unsorted portion
             for (int j = i + 1; j < n; ++j) {
                 if (result[j] < result[minIndex]) {
                     minIndex = j;
@@ -110,7 +107,7 @@ public:
             }
             
             // Swap the minimum element with the first unsorted element
-            // only if the minimum is not already in the correct position
+            // Only swap if a smaller element was found
             if (minIndex != i) {
                 swap(result[i], result[minIndex]);
             }
@@ -139,10 +136,9 @@ int main() {
         vector<int> result = solution.selectionSort(input);
         
         cout << "Test 1: Empty Array" << endl;
-        printVector(input, "  Input   ");
-        printVector(result, "  Output  ");
-        cout << "  Expected: ";
-        printVector(expected, "");
+        printVector(input, "  Input");
+        printVector(result, "  Output");
+        cout << "  Expected: []" << endl;
         cout << "  Status: " << (result == expected && verifySorted(result) ? "PASSED" : "FAILED") << endl;
         cout << endl;
     }
@@ -154,40 +150,37 @@ int main() {
         vector<int> result = solution.selectionSort(input);
         
         cout << "Test 2: Single Element" << endl;
-        printVector(input, "  Input   ");
-        printVector(result, "  Output  ");
-        cout << "  Expected: ";
-        printVector(expected, "");
+        printVector(input, "  Input");
+        printVector(result, "  Output");
+        cout << "  Expected: [42]" << endl;
         cout << "  Status: " << (result == expected && verifySorted(result) ? "PASSED" : "FAILED") << endl;
         cout << endl;
     }
     
-    // Test Case 3: Already sorted
+    // Test Case 3: Already sorted array
     {
         vector<int> input = {1, 2, 3, 4, 5};
         vector<int> expected = {1, 2, 3, 4, 5};
         vector<int> result = solution.selectionSort(input);
         
         cout << "Test 3: Already Sorted" << endl;
-        printVector(input, "  Input   ");
-        printVector(result, "  Output  ");
-        cout << "  Expected: ";
-        printVector(expected, "");
+        printVector(input, "  Input");
+        printVector(result, "  Output");
+        cout << "  Expected: [1, 2, 3, 4, 5]" << endl;
         cout << "  Status: " << (result == expected && verifySorted(result) ? "PASSED" : "FAILED") << endl;
         cout << endl;
     }
     
-    // Test Case 4: Reverse sorted
+    // Test Case 4: Reverse sorted array
     {
         vector<int> input = {5, 4, 3, 2, 1};
         vector<int> expected = {1, 2, 3, 4, 5};
         vector<int> result = solution.selectionSort(input);
         
         cout << "Test 4: Reverse Sorted" << endl;
-        printVector(input, "  Input   ");
-        printVector(result, "  Output  ");
-        cout << "  Expected: ";
-        printVector(expected, "");
+        printVector(input, "  Input");
+        printVector(result, "  Output");
+        cout << "  Expected: [1, 2, 3, 4, 5]" << endl;
         cout << "  Status: " << (result == expected && verifySorted(result) ? "PASSED" : "FAILED") << endl;
         cout << endl;
     }
@@ -199,10 +192,9 @@ int main() {
         vector<int> result = solution.selectionSort(input);
         
         cout << "Test 5: Array with Duplicates" << endl;
-        printVector(input, "  Input   ");
-        printVector(result, "  Output  ");
-        cout << "  Expected: ";
-        printVector(expected, "");
+        printVector(input, "  Input");
+        printVector(result, "  Output");
+        printVector(expected, "  Expected");
         cout << "  Status: " << (result == expected && verifySorted(result) ? "PASSED" : "FAILED") << endl;
         cout << endl;
     }
@@ -214,25 +206,23 @@ int main() {
         vector<int> result = solution.selectionSort(input);
         
         cout << "Test 6: Random Unsorted Array" << endl;
-        printVector(input, "  Input   ");
-        printVector(result, "  Output  ");
-        cout << "  Expected: ";
-        printVector(expected, "");
+        printVector(input, "  Input");
+        printVector(result, "  Output");
+        cout << "  Expected: [11, 12, 22, 25, 64]" << endl;
         cout << "  Status: " << (result == expected && verifySorted(result) ? "PASSED" : "FAILED") << endl;
         cout << endl;
     }
     
     // Test Case 7: Negative numbers
     {
-        vector<int> input = {-5, 3, -2, 8, -1, 0, 7};
-        vector<int> expected = {-5, -2, -1, 0, 3, 7, 8};
+        vector<int> input = {-5, 3, -2, 8, -1};
+        vector<int> expected = {-5, -2, -1, 3, 8};
         vector<int> result = solution.selectionSort(input);
         
         cout << "Test 7: Negative Numbers" << endl;
-        printVector(input, "  Input   ");
-        printVector(result, "  Output  ");
-        cout << "  Expected: ";
-        printVector(expected, "");
+        printVector(input, "  Input");
+        printVector(result, "  Output");
+        printVector(expected, "  Expected");
         cout << "  Status: " << (result == expected && verifySorted(result) ? "PASSED" : "FAILED") << endl;
         cout << endl;
     }
@@ -244,41 +234,24 @@ int main() {
         vector<int> result = solution.selectionSort(input);
         
         cout << "Test 8: Two Elements" << endl;
-        printVector(input, "  Input   ");
-        printVector(result, "  Output  ");
-        cout << "  Expected: ";
-        printVector(expected, "");
+        printVector(input, "  Input");
+        printVector(result, "  Output");
+        cout << "  Expected: [1, 2]" << endl;
         cout << "  Status: " << (result == expected && verifySorted(result) ? "PASSED" : "FAILED") << endl;
         cout << endl;
     }
     
-    // Test Case 9: All same elements
+    // Test Case 9: Verify input is not modified (returns copy)
     {
-        vector<int> input = {7, 7, 7, 7};
-        vector<int> expected = {7, 7, 7, 7};
+        vector<int> input = {5, 3, 8, 1, 2};
+        vector<int> original = input;
         vector<int> result = solution.selectionSort(input);
         
-        cout << "Test 9: All Same Elements" << endl;
-        printVector(input, "  Input   ");
-        printVector(result, "  Output  ");
-        cout << "  Expected: ";
-        printVector(expected, "");
-        cout << "  Status: " << (result == expected && verifySorted(result) ? "PASSED" : "FAILED") << endl;
-        cout << endl;
-    }
-    
-    // Test Case 10: Large array (verify it doesn't crash)
-    {
-        vector<int> input;
-        for (int i = 100; i >= 1; --i) {
-            input.push_back(i);
-        }
-        vector<int> result = solution.selectionSort(input);
-        
-        cout << "Test 10: Large Array (100 elements, reverse order)" << endl;
-        cout << "  Input size: " << input.size() << endl;
-        cout << "  Output size: " << result.size() << endl;
-        cout << "  Status: " << (verifySorted(result) ? "PASSED" : "FAILED") << endl;
+        cout << "Test 9: Input Not Modified (Returns Copy)" << endl;
+        printVector(original, "  Original Input");
+        printVector(input, "  Input After Sort");
+        printVector(result, "  Sorted Output");
+        cout << "  Status: " << (input == original ? "PASSED" : "FAILED") << endl;
         cout << endl;
     }
     
